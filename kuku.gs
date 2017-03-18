@@ -1,26 +1,25 @@
-var PAGE = 20;
-var ROW_PER_PAGE = 18;
-var COL_PER_ROW = 4;
 var FONT_SIZE = 18;
 
-// Add a custom menu to the active document, including a separator and a sub-menu.
+var ROW_PER_PAGE = 18;
+var COL_PER_ROW = 4;
+
 function onOpen(e) {
-  DocumentApp.getUi()
-    .createMenu('カスタムメニュー')
-    .addItem('九九の作成', 'makeKukuPages')
-    .addToUi();
+  var html = HtmlService
+               .createTemplateFromFile('sidebar')
+               .evaluate()
+               .setSandboxMode(HtmlService.SandboxMode.IFRAME)
+               .setTitle('九九の生成');
+  DocumentApp.getUi().showSidebar(html);
 }
 
-
-function makeKukuPages(){    
+function makeKukuPages(pages){
   var doc = DocumentApp.getActiveDocument();
   var body = doc.getBody();
   body.clear();
-  for(var page=0;page<PAGE;page++){
+  for(var page=0;page<pages;page++){
     appendKukuPage(body);
   }
 }
-
 
 function appendKukuPage(body){
   var kukuTable = [];
@@ -31,10 +30,10 @@ function appendKukuPage(body){
     }
     kukuTable.push(kukuLine);
   }
-  
+
   var style = {};
   style[DocumentApp.Attribute.FONT_SIZE] = FONT_SIZE;
-  
+
   var table = body.appendTable(kukuTable);
   table.setAttributes(style);
   body.appendPageBreak();
