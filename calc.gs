@@ -1,8 +1,21 @@
-var FONT_SIZE = 18;
-
-var ROW_PER_PAGE = 18;
-var COL_PER_ROW = 4;
-
+var PAGE_INFO = {
+  "18": {
+    fontSize   : 18,
+    rowPerPage : 18,
+    colPerRow  : 4
+  },
+  "24": {
+    fontSize   : 24,
+    rowPerPage : 14,
+    colPerRow  : 3
+  },
+  "32": {
+    fontSize   : 32,
+    rowPerPage : 11,
+    colPerRow  : 2
+  }
+}
+  
 
 var CALC_TYPE_ADD = "add";
 var CALC_TYPE_SUB = "sub";
@@ -25,7 +38,7 @@ function onOpen(e) {
   DocumentApp.getUi().showSidebar(html);
 }
 
-function makeCalcDrillPages(mode, pages){
+function makeCalcDrillPages(mode, fontSize, pages){
   var doc = DocumentApp.getActiveDocument();
   var body = doc.getBody();
 
@@ -35,26 +48,26 @@ function makeCalcDrillPages(mode, pages){
   var leftMaxNum = Math.pow(10, parseInt(modeParams[1])) - 1;
   var rightMaxNum = Math.pow(10, parseInt(modeParams[2]))-1;
   var resultMaxNum = paramNum>3 ? Math.pow(10, parseInt(modeParams[3]))-1:-1;
-
+  var pageInfo = PAGE_INFO[fontSize];
   body.clear();
 
   for(var page=0;page<pages;page++){
-    appendCalcDrillPage(body, calcType, leftMaxNum, rightMaxNum, resultMaxNum);
+    appendCalcDrillPage(body, calcType, leftMaxNum, rightMaxNum, resultMaxNum, pageInfo);
   }
 }
 
-function appendCalcDrillPage(body, calcType, leftMaxNum, rightMaxNum, resultMaxNum){
+function appendCalcDrillPage(body, calcType, leftMaxNum, rightMaxNum, resultMaxNum, pageInfo){
   var calcDrillTable = [];
-  for(var row=0;row<ROW_PER_PAGE;row++){
+  for(var row=0;row<pageInfo.rowPerPage;row++){
     var calcDrillLine = [];
-    for(var col=0;col<COL_PER_ROW;col++){
+    for(var col=0;col<pageInfo.colPerRow;col++){
       calcDrillLine.push(makeCalcDrill(calcType, leftMaxNum, rightMaxNum, resultMaxNum));
     }
     calcDrillTable.push(calcDrillLine);
   }
 
   var style = {};
-  style[DocumentApp.Attribute.FONT_SIZE] = FONT_SIZE;
+  style[DocumentApp.Attribute.FONT_SIZE] = pageInfo.fontSize;
 
   var table = body.appendTable(calcDrillTable);
   table.setAttributes(style);

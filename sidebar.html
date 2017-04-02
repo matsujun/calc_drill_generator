@@ -20,12 +20,22 @@
         <option value="sub:2:1">2けた以下 − 1けた</option>
         <option value="sub:2:2">2けた以下 − 2けた以下</option>
         <optgroup label="かけ算">
-        <option value="mul:1:1">1けた × 1けた</option>
+        <option value="mul:1:1" selected>1けた × 1けた</option>
         <option value="mul:2:1">2けた以下 × 1けた</option>
         <option value="mul:2:2">2けた以下 × 2けた以下</option>
         <optgroup label="わり算">
         <option value="div:2:1">2けた以下 ÷ 1けた</option>
         <option value="div:2:1:1">2けた以下 ÷ 1けた ＝ 1けた</option>
+      </select>
+    </td>
+  </tr>
+  <tr>
+    <td>文字サイズ</td>
+    <td>
+      <select name="fontSize">
+        <option value="18" selected>18 (1ページあたり 18x4 問)</option>
+        <option value="24">24 (1ページあたり 14x3 問)</option>
+        <option value="32">32 (1ページあたり 11x2 問)</option>
       </select>
     </td>
   </tr>
@@ -37,7 +47,8 @@ $(function(){
   $('#ok').click(function(){
     var pageNum = $(':text[name="pageNum"]').val();
     var mode = $('[name=mode]').val();
-    google.script.run.makeCalcDrillPages(mode, pageNum);
+    var fontSize = $('[name=fontSize]').val();
+    google.script.run.makeCalcDrillPages(mode, fontSize, pageNum);
   });
 });
 </script>
