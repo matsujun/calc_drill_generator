@@ -4,10 +4,6 @@ var ROW_PER_PAGE = 18;
 var COL_PER_ROW = 4;
 
 
-
-
-
-
 var CALC_TYPE_ADD = "add";
 var CALC_TYPE_SUB = "sub";
 var CALC_TYPE_MUL = "mul";
@@ -35,22 +31,24 @@ function makeCalcDrillPages(mode, pages){
 
   var modeParams = mode.split(":");
   var calcType = modeParams[0];
+  var paramNum = modeParams.length;
   var leftMaxNum = Math.pow(10, parseInt(modeParams[1])) - 1;
-  var rightMaxNum = Math.pow(10, parseInt(modeParams[2])) - 1;
+  var rightMaxNum = Math.pow(10, parseInt(modeParams[2]))-1;
+  var resultMaxNum = paramNum>3 ? Math.pow(10, parseInt(modeParams[3]))-1:-1;
 
   body.clear();
 
   for(var page=0;page<pages;page++){
-    appendCalcDrillPage(body, calcType, leftMaxNum, rightMaxNum);
+    appendCalcDrillPage(body, calcType, leftMaxNum, rightMaxNum, resultMaxNum);
   }
 }
 
-function appendCalcDrillPage(body, calcType, leftMaxNum, rightMaxNum){
+function appendCalcDrillPage(body, calcType, leftMaxNum, rightMaxNum, resultMaxNum){
   var calcDrillTable = [];
   for(var row=0;row<ROW_PER_PAGE;row++){
     var calcDrillLine = [];
     for(var col=0;col<COL_PER_ROW;col++){
-      calcDrillLine.push(makeCalcDrill(calcType, leftMaxNum, rightMaxNum));
+      calcDrillLine.push(makeCalcDrill(calcType, leftMaxNum, rightMaxNum, resultMaxNum));
     }
     calcDrillTable.push(calcDrillLine);
   }
@@ -63,7 +61,7 @@ function appendCalcDrillPage(body, calcType, leftMaxNum, rightMaxNum){
   body.appendPageBreak();
 }
 
-function makeCalcDrill(calcType, leftMaxNum, rightMaxNum) {
+function makeCalcDrill(calcType, leftMaxNum, rightMaxNum, resultMaxNum) {
   var calcSign = CALC_TYPE_SIGN[calcType];
   var left,right;
   if (calcType == CALC_TYPE_SUB) {
@@ -72,7 +70,12 @@ function makeCalcDrill(calcType, leftMaxNum, rightMaxNum) {
     right = getRandom(Math.min(rightMaxNum, left-1));//left未満
   } else if (calcType == CALC_TYPE_DIV) {
     right = getRandom(rightMaxNum);
-    var answer = getRandom(Math.floor(leftMaxNum/right));//割り切れるように答えを先に算出
+    var _resultMaxNum = Math.floor(leftMaxNum/right)
+    if (_resultMaxNum > 0) {
+      //答えの桁数上限が指定されていたら、答えの最大値を調整
+      _resultMaxNum = Math.min(_resultMaxNum, resultMaxNum);
+    }
+    var answer = getRandom(_resultMaxNum);//割り切れるように答えを先に算出
     left = right * answer;
   } else {
     left = getRandom(leftMaxNum);
